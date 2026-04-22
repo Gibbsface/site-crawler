@@ -2,7 +2,7 @@ import unittest
 
 
 class TestFunctions(unittest.TestCase):
-    def test_text(self):
+    def test_queue(self):
         ans1 = 1
         ans2 = 1
 

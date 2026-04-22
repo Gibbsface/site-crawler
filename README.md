@@ -15,3 +15,6 @@ This is a CLI tool. You give it a top-level domain and it will crawl the sitemap
 
 ### Flags
 * `-v` = Verbose. Useful for debugging, will print everything out.
+
+## Future Ideas
+* [ ] add flag to specify max number of pages to crawl
