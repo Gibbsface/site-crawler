@@ -1,17 +1,15 @@
-import argparse
+from code.arg_handler import handle_args
 
 def main():
-    print("Hello World!")
+    args = handle_args()
+    is_v = args.verbose
+    base_url = args.url
 
-    # TODO set up arg parser
-    # let -v be a flag for verbose mode
-    # the first positional argument needs to be a URL
+    if is_v:
+        print(f"Base URL: {base_url}")
 
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("--verbose", action="store_true")
-    # args = parser.parse_args()
+    
 
-    # if args.verbose:
-    #     print("Verbose mode on")
+    
 
 main()
