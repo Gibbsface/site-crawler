@@ -9,4 +9,9 @@ This is a CLI tool. You give it a top-level domain and it will crawl the sitemap
 * timeout after 1,000 pages
 
 ## Syntax
-TBD
+* Uses `uv`. After downloading, run `uv sync`
+* Test with `./test.sh`
+* Run with `uv run main <URL> [flags]`
+
+### Flags
+* `-v` = Verbose. Useful for debugging, will print everything out.
