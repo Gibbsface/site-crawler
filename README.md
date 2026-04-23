@@ -11,10 +11,13 @@ This is a CLI tool. You give it a top-level domain and it will crawl the sitemap
 ## Syntax
 * Uses `uv`. After downloading, run `uv sync`
 * Test with `./test.sh`
-* Run with `uv run main <URL> [flags]`
+* Run with `uv run main <URL>`
 
 ### Flags
 * `-v` = Verbose. Useful for debugging, will print everything out.
 
 ## Future Ideas
-* [ ] add flag to specify max number of pages to crawl
+* [ ] add cli flag to specify max number of pages to crawl
+* [ ] test external URLs for 404s... this will require 2 separate queues i think
+* [ ] filter out garbage links 
+* [ ] remove query paramaters
