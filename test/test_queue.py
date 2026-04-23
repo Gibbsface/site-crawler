@@ -2,7 +2,7 @@ import unittest
 
 
 class TestFunctions(unittest.TestCase):
-    def test_queue(self):
+    def test_requestor(self):
         ans1 = 1
         ans2 = 1
 

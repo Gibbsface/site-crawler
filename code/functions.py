@@ -1,5 +1,6 @@
 import argparse
 import re
+import requests
 
 def handle_args():
     parser = argparse.ArgumentParser()
@@ -7,6 +8,9 @@ def handle_args():
     parser.add_argument("-v", "--verbose", action="store_true")
     return parser.parse_args()
 
-def is_url_valid(url):
-    # do I really even need this? 
-    return True
+def fetch_response(url):
+    try:
+        return requests.get(url)
+    except requests.exceptions.MissingSchema as e:
+        # print(f"Error: \"{url}\" is missing schema.\n\tretrying this url with \"https://\" prefixed...")
+        return fetch_response("https://" + url)
