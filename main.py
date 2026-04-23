@@ -4,7 +4,7 @@ import time
 from code.functions import *
 from code.queue import Queue
 
-MAX_PAGES = 100
+MAX_PAGES = 200
 
 def main():
     base_url, v = handle_args()
@@ -16,7 +16,7 @@ def main():
         print("Error: base url provided is missing schema. " \
         "\n\tPrepending \"https://\" and continuing...")
         base_url = "https://" + base_url
-    if not base_url.endswith("/"): base_url += "/"
+    # if not base_url.endswith("/"): base_url += "/"
 
     q = Queue()
     memo = []
@@ -41,8 +41,16 @@ def main():
         # this first block just tries to fetch a response
         try:
             r = fetch_response(url)
+        except requests.exceptions.SSLError as e:
+            if v: print("\tRETRY: SSL could not be verified, retrying with SSl verification disabled...")
+            try:
+                r = fetch_response(url, verify=False)
+            except Exception as e:
+                if v: print("\tFAILED: skipping")
+                continue
         except Exception as e:
             if v: print(f"\tSKIP: unable to get a response...")
+            print(e)
             continue
 
         if v: print(f"\t{r.status_code} received for {url}")
@@ -57,7 +65,7 @@ def main():
                 q.push(l)
 
         else:
-            pass
+            print(f"\n{r.status_code} for {url}")
             # invalid response, log it
 
         # if v: print(f"\tfound {len(links)} links, added {} to queue")

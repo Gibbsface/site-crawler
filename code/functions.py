@@ -1,6 +1,8 @@
 import argparse
 import re
 import requests
+import certifi
+import urllib3
 
 def handle_args():
     parser = argparse.ArgumentParser()
@@ -15,9 +17,10 @@ def verify_base_url(url):
     else:
         raise Exception
 
-def fetch_response(url):
+def fetch_response(url, cert=certifi.where()):
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     try:
-        return requests.get(url)
+        return requests.get(url, verify=cert) if not cert else requests.get(url, verify=False)
     except requests.exceptions.MissingSchema as e:
         # print(f"Error: \"{url}\" is missing schema.\n\tretrying this url with \"https://\" prefixed...")
         return fetch_response("https://" + url)
