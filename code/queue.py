@@ -6,8 +6,9 @@ class Queue:
         self.is_empty = True
 
     def push(self, thing):
-        self.array.append(thing)
-        self.is_empty = False
+        if thing not in self.array:
+            self.array.append(thing)
+            self.is_empty = False
 
     def can_pop(self):
         return not self.is_empty
@@ -25,4 +26,7 @@ class Queue:
     
     def peek(self):
         return False if not self.array else self.array[0]
+    
+    def size(self):
+        return len(self.array)
         

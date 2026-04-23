@@ -1,16 +1,22 @@
 import requests
 import time
 
-from code.functions import handle_args, fetch_response
+from code.functions import *
 from code.queue import Queue
 
-MAX_PAGES = 1_000
+MAX_PAGES = 100
 
 def main():
-    args = handle_args()
-    v = args.verbose
-    # TODO handle case where schema is missing, elegantly warn the user and assume https://
-    if v: print(f"Base URL: {args.url}")
+    base_url, v = handle_args()
+    if v: print(f"Base URL: {base_url}")
+
+    try:
+        verify_base_url(base_url)
+    except Exception:
+        print("Error: base url provided is missing schema. " \
+        "\n\tPrepending \"https://\" and continuing...")
+        base_url = "https://" + base_url
+    if not base_url.endswith("/"): base_url += "/"
 
     q = Queue()
     memo = []
@@ -19,19 +25,10 @@ def main():
     # we want to log every url attempted and the outcome
     # url, response code (200, 4XX, 5XX, other), external urls, count of every duplicate, which links it had
 
-    #TEST STUFF
-    q.push("www.dts.edu")
-    q.push("http://www.dts.edu")
-    q.push("https://www.dts.edu")
-    q.push("www.dts.edu/3245")
-    q.push("asdfasdf.dtsesf.owij")
-    q.push("www.dts.edu")
-    #TEST STUFF
-
     # start timer
     start_time = time.perf_counter()
 
-    q.push(args.url)
+    q.push(base_url)
     while q.can_pop() and n < MAX_PAGES:
         url = q.pop()
         if v: print(f"\n{url}")
@@ -54,44 +51,24 @@ def main():
 
         # this second block actually processes the result
         if r.status_code == requests.codes.ok:
-            # valid response recieved, time to parse and stuff
-            # links = parse_the_response(r.text) this function will accept html and spit out a list of links to queue
-            # first we will regex for <a href=""> and collect all of the raw href's. 
-            # we want to prepend any relative hrefs with the base url
-            # we also want to discard any external links that point to a different domain, log them
-            links = []
             n += 1
-            pass
+            links = extract_links(r.text, base_url)
+            for l in links:
+                q.push(l)
+
         else:
             pass
             # invalid response, log it
 
-        # this final block will queue original links
-        for l in links:
-            if l not in memo: q.push(l)
+        # if v: print(f"\tfound {len(links)} links, added {} to queue")
+        if v: print(f"\n{q.size()} IN QUEUE\n")
+        
 
-    #end of loop, queue is empty
+    #end of loop, queue is empty (or max hit)
     exec_time = time.perf_counter() - start_time
     print("\n--- DONE ---")
+    if n >= MAX_PAGES: print(f"Max page limit reached")
     print(f"Processed {n} unique valid pages in {exec_time:.4f}s\n")
-        
-        #this next block needs to use validate_ helper function to see if request is OK
-        # if valid, we will parse the repsonse, memoize this url so we don't repeat it, and increment n
-        # # otherwise we will log the response code if it is a 4XX or 5XX error
-        # if validate_url(url)
-        # if response.status_code == requests.codes.ok:
-        #     links = parse_the_response(url)
-        #     memoize(url)
-        #     n += 1
-        #     # put that^ in a try block so we can catch parsing errors.
-        #     # we still want to memoize and increment n, even if there's a parsing error
-        #     # then if we find links, we'll queue them
-        #     for links, check if in memo, else append to Queue
-            
-        # else:
-        #     log_error_stuff
-    
 
     
-
 main()
