@@ -9,14 +9,15 @@ MAX_PAGES = 1_000
 def main():
     args = handle_args()
     v = args.verbose
-    if v:
-        print(f"Base URL: {args.url}")
+    # TODO handle case where schema is missing, elegantly warn the user and assume https://
+    if v: print(f"Base URL: {args.url}")
 
     q = Queue()
     memo = []
     n = 0
-    #TODO initialize memo
-    #TODO initialize error log
+    #TODO initialize log. 
+    # we want to log every url attempted and the outcome
+    # url, response code (200, 4XX, 5XX, other), external urls, count of every duplicate, which links it had
 
     #TEST STUFF
     q.push("www.dts.edu")
@@ -55,6 +56,9 @@ def main():
         if r.status_code == requests.codes.ok:
             # valid response recieved, time to parse and stuff
             # links = parse_the_response(r.text) this function will accept html and spit out a list of links to queue
+            # first we will regex for <a href=""> and collect all of the raw href's. 
+            # we want to prepend any relative hrefs with the base url
+            # we also want to discard any external links that point to a different domain, log them
             links = []
             n += 1
             pass
